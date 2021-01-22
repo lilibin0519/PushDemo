@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    defaultConfig {
+//        applicationId "com.libin.pushdemo"
+        applicationId "com.benduoduo.mall"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : applicationId,
+                JPUSH_APPKEY  : "741c1dba8315777bc30b1774",//值来自开发者平台取得的AppKey
+                JPUSH_CHANNEL : "default_developer",
+
+                //xiaomi_config_start
+                XIAOMI_APPID  : "2882303761518901606",
+                XIAOMI_APPKEY : "5511890168606",
+                //xiaomi_config_end
+                //oppo_config_start
+                OPPO_APPKEY   : "896951c08597479286ef20d182dd659b",
+                OPPO_APPID    : "30434987",
+                OPPO_APPSECRET: "8667a5375e024bfa97cb7c2969808213",
+                //oppo_config_end
+                //vivo_config_start
+                VIVO_APPKEY   : "0590166c70f26abb948ace249997b0a0",
+                VIVO_APPID    : "105354469",
+                //vivo_config_end
+
+
+        ]
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("key/benduoduo.keystore")
+            storePassword "Benduoduo1"
+            keyAlias "benduoduoalias"
+            keyPassword "Benduoduo1"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug{
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    //执行lint检查，有任何的错误或者警告提示，都会终止构建，我们可以将其关掉。
+    lintOptions {
+        abortOnError false
+    }
+
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:$supportLibVersion"
+    testImplementation 'junit:junit:4.12'
+
+    // 引入极光 SDK
+//    implementation project(':jiguang')
+
+    //oppo_dependencies_start
+    // oppo 厂商 aar 需要单独引入
+    implementation(name: 'com.heytap.msp-push-2.1.0', ext: 'aar')
+    //oppo_dependencies_end
+    //hms
+    implementation 'com.huawei.hms:push:5.0.2.300'
+}
+
+
+//huawei_plugin_start
+//华为请按照厂商文档配置根 gradle 华为镜像依赖和添加 agconnect-services.json 后再打开此插件依赖
+apply plugin: 'com.huawei.agconnect'
+//huawei_plugin_end
